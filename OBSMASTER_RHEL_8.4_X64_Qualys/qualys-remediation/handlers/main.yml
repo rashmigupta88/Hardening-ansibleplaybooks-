@@ -1,0 +1,5 @@
+---
+
+- name: Including sub handlers
+  block:
+    - include: mount.yml

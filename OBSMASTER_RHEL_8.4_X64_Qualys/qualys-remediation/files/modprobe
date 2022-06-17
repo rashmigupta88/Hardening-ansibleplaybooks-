@@ -1,0 +1,16 @@
+blacklist cramfs
+install cramfs /bin/false
+blacklist squashfs
+install squashfs /bin/false
+blacklist udf
+install udf /bin/false
+blacklist freevxfs
+install freevxfs /bin/false
+blacklist hfs
+install hfs /bin/false
+blacklist hfsplus
+install hfsplus /bin/false
+blacklist jffs2
+install jffs2 /bin/false
+blacklist vfat
+install vfat /bin/false

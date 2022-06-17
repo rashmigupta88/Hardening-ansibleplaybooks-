@@ -1,0 +1,149 @@
+---
+
+#Control ID 1417
+- name: Deleting cron.deny
+  file:
+    path: /etc/cron.deny
+    state: absent
+
+#Control ID 1418
+- name: Deleting at.deny
+  file:
+    path: /etc/at.deny
+    state: absent
+
+#Control ID 2678
+- name: Adding TMOUT in bashrc
+  lineinfile:
+    path: /etc/bashrc
+    line: 'TMOUT=300'
+
+
+#Control ID 2679
+- name: Adding TMOUT in profile
+  lineinfile:
+    path: /etc/profile
+    line: 'TMOUT=300'
+
+#Control ID 12884
+#Control ID 4726
+- name: Fixing the default umask value
+  replace:
+    path: '{{item.Path}}'
+    regexp: '(\s\s)umask(\s+.*)'
+    replace: '  umask 077'
+  with_items:
+   - { Path: '/etc/profile' }        #Control ID 12884
+   - { Path: '/etc/bashrc' }         #Control ID 4726
+
+
+#Control ID 5436
+- name: Setting INACTIVE in useradd
+  lineinfile:
+    path: /etc/default/useradd
+    regexp: 'INACTIVE\=\-1'
+    line: 'INACTIVE=30'
+
+#Control ID 10866
+- name: Creating 90-cis-coredump.conf
+  file:
+    path: /etc/security/limits.d/90-cis-coredump.conf
+    state: touch
+
+- name: Update/Create core dump in 90-cis-coredump.conf
+  blockinfile:
+    path: /etc/security/limits.d/90-cis-coredump.conf
+    marker: ""
+    block: |
+      *                hard    core            0
+ 
+#Control ID 17126
+- name: Changing 'use_pty' in /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    insertafter: 'secure_path'
+    line: 'Defaults    use_pty'
+
+#Control ID 17131
+- name: Setting ForwardToSyslog in journald
+  lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^ForwardToSyslog'
+    insertafter: '^#ForwardToSyslog'
+    line: 'ForwardToSyslog=yes'
+#Control ID 17132
+- name: Setting Compress in journald
+  lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^Compress'
+    insertafter: '^#Compress'
+    line: 'Compress=yes'
+
+#Control ID 17133
+- name: Setting storage attribute in journald.conf
+  lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^Storage'
+    insertafter: '^#Storage'
+    line: 'Storage=persistent'
+ 
+#Control ID 17222
+- name: Update/Create storage in coredump.conf
+  blockinfile:
+    path: /etc/systemd/coredump.conf
+    insertafter: '^#Storage'
+    marker: ""
+    block: |
+      ## CIS - 1.6.1 Ensure core dumps are restricted (Storage)
+      Storage=none
+#Control ID 17223
+- name: Update/Create ProcessSizeMax in coredump.conf
+  blockinfile:
+    path: /etc/systemd/coredump.conf
+    insertafter: '^#ProcessSizeMax'
+    marker: ""
+    block: |
+      ## CIS - 1.6.1 Ensure core dumps are restricted (ProcessSizeMax)
+      ProcessSizeMax=0
+      
+#Control ID 12807      
+#- name: Enforcing Password Change at first Login
+  #shell: chage -d 0 "{{ item }}"
+  #with_items:
+  # - root
+  # - osadmin
+     
+#Control ID 17164
+- name: Setting selinux to Permissive
+  selinux:
+    policy: targeted
+    state: permissive
+    
+#Control ID 17145
+- name: Changing logfile in /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    insertafter: 'secure_path'
+    line: 'Defaults    logfile="/var/log/sudo.log"'
+    
+#Control ID 9333
+- name: Enable service avahi-daemon, and not touch the state
+  ansible.builtin.service:
+    name: avahi-daemon
+    enabled: yes
+    
+#Control ID 7411
+- name: Install package
+  dnf:
+   state: present
+   name: aide
+    
+
+#Control ID 10506
+- name: Creating /root/bin
+  file:
+    path: /root/bin
+    owner: root
+    group: root
+    mode: '755'
+    state: directory

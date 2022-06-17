@@ -1,0 +1,14 @@
+---
+
+- name: Fixing issues of /etc/login.defs
+  ansible.builtin.lineinfile:
+    dest: /etc/login.defs
+    regexp: '{{item.From}}'
+    insertafter: '{{item.After}}'
+    line: '{{item.To}}'
+    state: present
+    backup: yes
+  with_items:
+   - { From: '^PASS_MIN_DAYS\s+0', To: 'PASS_MIN_DAYS   7', After: '^PASS_MIN_DAYS' }          #Control ID 1072
+   - { From: '^PASS_MAX_DAYS\s+99999', To: 'PASS_MAX_DAYS   180', After: '^PASS_MAX_DAYS' }    #Control ID 1073
+

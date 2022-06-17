@@ -1,0 +1,161 @@
+---
+
+#Control ID 3916
+- name: Creating limits.conf
+  file:
+    path: /etc/security/limits.d/limits.conf
+    state: touch
+
+- name: Creating limits.conf
+  file:
+    path: /etc/security/limits.conf
+    state: touch
+
+- name: Update/Create core dump in limits.conf
+  blockinfile:
+    path: /etc/security/limits.d/limits.conf
+    marker: ""
+    block: |
+      *                hard    core            0
+
+- name: Update/Create core dump in limits.conf
+  blockinfile:
+    path: /etc/security/limits.conf
+    marker: ""
+    block: |
+      *                hard    core            0
+
+#Control ID 17996
+- name: Adding MACs in sshd_config file
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^MACs\s+'
+    line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+    backup: yes
+  ignore_errors: yes
+      
+- name: Adding Ciphers in sshd_config file
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^Ciphers\s+'
+    line: 'Ciphers chacha20-poly1305@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com'
+    backup: yes
+  ignore_errors: yes
+  
+#Control ID 14400  
+- name: Adding kexalgorithms in sshd_config file
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^kexalgorithms\s+'
+    line: 'kexalgorithms diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1'
+    backup: yes
+  ignore_errors: yes
+
+#Control ID 6796  
+- name: Update 'pam_wheel.so' setting in PAM configuration file '/etc/pam.d/su'
+  blockinfile:
+    path: /etc/pam.d/su
+    marker: ""
+    block: |
+      auth           required        pam_wheel.so use_uid
+  
+#Control ID 12884
+
+- name: Fixing the default umask value
+  lineinfile:
+      dest: /etc/profile
+      regexp: '^(#*)umask'
+      line: 'umask 027'
+      backup: yes
+
+#Control ID 17131
+- name: Setting ForwardToSyslog in journald
+  lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^ForwardToSyslog'
+    insertafter: '^#ForwardToSyslog'
+    line: 'ForwardToSyslog=yes'
+#Control ID 17132
+- name: Setting Compress in journald
+  lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^Compress'
+    insertafter: '^#Compress'
+    line: 'Compress=yes'
+
+#Control ID 17133
+- name: Setting storage attribute in journald.conf
+  lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^Storage'
+    insertafter: '^#Storage'
+    line: 'Storage=persistent'
+
+#Control ID 17222
+- name: Update/Create storage in coredump.conf
+  blockinfile:
+    path: /etc/systemd/coredump.conf
+    insertafter: '^#Storage'
+    marker: ""
+    block: |
+      ## CIS - 1.6.1 Ensure core dumps are restricted (Storage)
+      Storage=none
+#Control ID 17223
+- name: Update/Create ProcessSizeMax in coredump.conf
+  blockinfile:
+    path: /etc/systemd/coredump.conf
+    insertafter: '^#ProcessSizeMax'
+    marker: ""
+    block: |
+      ## CIS - 1.6.1 Ensure core dumps are restricted (ProcessSizeMax)
+      ProcessSizeMax=0
+
+#Control ID 17126
+- name: Creating sudoers
+  file:
+    path: /etc/sudoers
+    state: touch
+
+- name: Changing 'use_pty' in /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    insertafter: 'secure_path'
+    line: 'Defaults    use_pty'
+
+#Control ID 17145
+- name: Changing logfile in /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    insertafter: 'secure_path'
+    line: 'Defaults    logfile="/var/log/sudo.log"'
+
+#Control ID 12800,12785
+- name: Setting up fixes in /usr/lib/sysctl.d/50-coredump.conf
+  lineinfile:
+    dest: /usr/lib/sysctl.d/50-coredump.conf
+    regexp: '{{item.From}}'
+    insertafter: '{{item.After}}'
+    line: '{{item.To}}'
+    state: present
+    backup: yes
+  with_items:
+   - { From: '^fs.suid_dumpable', To: 'fs.suid_dumpable=0', After: '^#fs.suid_dumpable' }                                          #Control ID 12785
+#Control ID 12800
+- name: Setting up fixes in /usr/lib/sysctl.d/50-default.conf
+  lineinfile:
+    dest: /usr/lib/sysctl.d/50-default.conf
+    regexp: '{{item.From}}'
+    insertafter: '{{item.After}}'
+    line: '{{item.To}}'
+    state: present
+    backup: yes
+  with_items:
+   - { From: '^net.ipv4.conf.all.rp_filter', To: 'net.ipv4.conf.all.rp_filter=1', After: '^#net.ipv4.conf.all.rp_filter' }         #Control ID 12800
+
+#Control ID 11469
+- name: Update 'pam_tally2.so' setting in PAM configuration file '/etc/pam.d/common-auth'
+  blockinfile:
+    path: /etc/pam.d/common-auth
+    marker: ""
+    block: |
+      auth    required     pam_tally2.so onerr=fail audit silent deny=5 unlock_time=900

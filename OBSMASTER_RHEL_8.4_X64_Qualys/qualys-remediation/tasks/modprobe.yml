@@ -1,0 +1,23 @@
+---
+#Control ID 9710
+#Control ID 9711
+#Control ID 9705
+
+- name: Adding Filesystem in modprobe
+  copy:
+     src: /home/rashmi/Project/OS-Hardening-OBSMASTER84/files/modprobe
+     dest: /etc/modprobe.d/blacklist-filesystems.conf
+     owner: root
+     group: root
+     mode: '0644'
+
+
+#Control ID 11416
+
+- name: Creating cis-usb-storage.conf
+  copy:
+     content: 'install usb-storage /bin/true'
+     dest: /etc/modprobe.d/cis-usb-storage.conf
+     owner: root
+     group: root
+     mode: '0644'

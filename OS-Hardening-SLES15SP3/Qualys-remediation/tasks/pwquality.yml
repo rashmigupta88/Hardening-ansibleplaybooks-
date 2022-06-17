@@ -1,0 +1,7 @@
+---
+
+#control ID 6379 6380 6396 6397 6398 2741
+- name: Fixing issues of /etc/pam.d/common-password
+  shell:
+      cmd: 'pam-config -a --cracklib --cracklib-minlen=14 --cracklib-lcredit=-1 --cracklib-ucredit=-1 --cracklib-dcredit=-1 --cracklib-ocredit=-1 --pwhistory --pwhistory-use_authtok --pwhistory-remember=5'
+      warn: False

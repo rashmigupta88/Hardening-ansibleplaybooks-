@@ -1,0 +1,16 @@
+---
+
+
+- name: Fixing issues of /etc/security/pwquality.conf
+  ansible.builtin.lineinfile:
+    dest: /etc/security/pwquality.conf
+    line: '{{item}}'
+    state: present
+    backup: yes
+  with_items:
+   - "dcredit = -1"   #Control ID 9495
+   - "ucredit = -1"   #Control ID 9496
+   - "ocredit = -1"   #Control ID 9497
+   - "lcredit = -1"   #Control ID 9498
+   - "minclass = 4"   #Control ID 10654
+   - "minlen = 14"   #Control ID 6379 

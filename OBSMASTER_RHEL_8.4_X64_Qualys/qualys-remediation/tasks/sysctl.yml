@@ -1,0 +1,27 @@
+---
+
+- name: Fixing the sysctl issues
+  sysctl:
+    name: '{{ item.Setting }}'
+    value: '{{ item.Value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_items:
+   - { Setting: 'net.ipv4.conf.all.accept_redirects', Value: '0' }                #Control ID 5956
+   - { Setting: 'net.ipv4.conf.all.secure_redirects', Value: '0' }                #Control ID 5957
+   - { Setting: 'net.ipv4.conf.default.rp_filter', Value: '1' }                   #Control ID 5958
+   - { Setting: 'net.ipv4.conf.default.accept_source_route', Value: '0' }         #Control ID 5959
+   - { Setting: 'net.ipv4.conf.default.accept_redirects', Value: '0' }            #Control ID 5960
+   - { Setting: 'net.ipv4.conf.default.secure_redirects', Value: '0' }            #Control ID 5961
+   - { Setting: 'net.ipv4.ip_forward', Value: '0' }                               #Control ID 5963
+   - { Setting: 'net.ipv4.conf.default.send_redirects', Value: '0' }              #Control ID 5964
+   - { Setting: 'net.ipv4.conf.all.send_redirects', Value: '0' }                  #Control ID 5965
+   - { Setting: 'net.ipv4.conf.all.log_martians', Value: '1' }                    #Control ID 5966
+   - { Setting: 'net.ipv4.conf.default.log_martians', Value: '1' }                #Control ID 7464
+   - { Setting: 'net.ipv6.conf.all.accept_ra', Value: '0' }                       #Control ID 7478
+   - { Setting: 'net.ipv6.conf.default.accept_ra', Value: '0' }                   #Control ID 7500
+   - { Setting: 'net.ipv6.conf.all.accept_redirects', Value: '0' }                #Control ID 7505
+   - { Setting: 'net.ipv6.conf.default.accept_redirects', Value: '0' }            #Control ID 7506
+   - { Setting: 'kernel.randomize_va_space', Value: '2' }                         #Control ID 10507
+   - { Setting: 'fs.suid_dumpable', Value: '0' }                                  #Control ID 10508

@@ -1,0 +1,9 @@
+---
+
+- name: stop Systemctl service rpcbind and cups
+  ansible.builtin.systemd:
+    name: '{{item.Service}}'
+    state: '{{item.State}}'
+  with_items:
+   - { Service: 'rpcbind', State: 'stopped' }       #Control ID 1202
+   - { Service: 'cups', State: 'stopped' }    #Control ID 1260

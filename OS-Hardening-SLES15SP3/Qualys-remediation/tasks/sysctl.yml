@@ -1,0 +1,33 @@
+---
+
+- name: Fixing the sysctl issues
+  sysctl:
+    name: '{{ item.Setting }}'
+    value: '{{ item.Value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_items:
+   - { Setting: 'net.ipv4.conf.all.accept_redirects', Value: '0' }                #Control ID 1768
+   - { Setting: 'net.ipv4.conf.all.secure_redirects', Value: '0' }                #Control ID 1770
+   - { Setting: 'net.ipv4.conf.default.rp_filter', Value: '1' }                   #Control ID 1776
+   - { Setting: 'net.ipv4.conf.all.rp_filter', Value: '1' }                       #Control ID 10736
+   - { Setting: 'net.ipv4.icmp_ignore_bogus_error_responses', Value: '1' }        #Control ID 10158
+   - { Setting: 'net.ipv4.conf.default.accept_source_route', Value: '0' }         #Control ID 2321
+   - { Setting: 'net.ipv4.conf.all.accept_source_route', Value: '0' }             #Control ID 1774
+   - { Setting: 'net.ipv4.conf.default.accept_redirects', Value: '0' }            #Control ID 1769
+   - { Setting: 'net.ipv4.conf.default.secure_redirects', Value: '0' }            #Control ID 1771
+   - { Setting: 'net.ipv4.icmp_echo_ignore_broadcasts', Value: '1' }              #Control ID 1772
+   - { Setting: 'net.ipv4.tcp_syncookies', Value: '1' }                           #Control ID 1777
+   - { Setting: 'net.ipv4.ip_forward', Value: '0' }                               #Control ID 1778
+   - { Setting: 'net.ipv4.conf.default.send_redirects', Value: '0' }              #Control ID 1780
+   - { Setting: 'net.ipv4.conf.all.send_redirects', Value: '0' }                  #Control ID 1779
+   - { Setting: 'net.ipv4.conf.all.log_martians', Value: '1' }                    #Control ID 2276
+   - { Setting: 'net.ipv4.conf.default.log_martians', Value: '1' }                #Control ID 10487
+   - { Setting: 'net.ipv6.conf.all.accept_ra', Value: '0' }                       #Control ID 10488
+   - { Setting: 'net.ipv6.conf.default.accept_ra', Value: '0' }                   #Control ID 10489
+   - { Setting: 'net.ipv6.conf.all.accept_redirects', Value: '0' }                #Control ID 10490
+   - { Setting: 'net.ipv6.conf.default.accept_redirects', Value: '0' }            #Control ID 10491
+   - { Setting: 'net.ipv6.conf.all.forwarding', Value: '0' }                      #Control ID 12680
+   - { Setting: 'kernel.randomize_va_space', Value: '2' }                         #Control ID 10507
+   - { Setting: 'fs.suid_dumpable', Value: '0' }                                  #Control ID 10508

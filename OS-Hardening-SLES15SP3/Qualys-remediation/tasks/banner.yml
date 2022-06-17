@@ -1,0 +1,18 @@
+---
+#Control ID 3868
+- name: Copying banner
+  copy:
+     src: /home/rashmi/Project/OS-Hardening-SLES-15sp3/files/banner
+     dest: /etc/motd
+     owner: root
+     group: root
+     mode: '0644'
+
+- name: Copying banner
+  copy:
+     src: /home/rashmi/Project/OS-Hardening-SLES-15sp3/files/banner
+     dest: /etc/issue
+     owner: root
+     group: root
+     mode: '0644'
+

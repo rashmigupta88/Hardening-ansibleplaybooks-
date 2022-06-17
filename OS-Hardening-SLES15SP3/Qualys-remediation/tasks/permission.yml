@@ -1,0 +1,16 @@
+---
+
+- name: Fixing permission issues
+  file:
+    path: '{{item.Path}}'
+    mode: '{{item.Perm}}'
+    group: '{{item.user}}'
+    state: '{{item.State}}'
+  with_items:
+   - { Path: '/etc/cron.d', Perm: '700', user: 'root', State: 'directory' }                                        #Control ID 7339
+   - { Path: '/etc/cron.daily', Perm: '700', user: 'root', State: 'directory' }                                    #Control ID 7341
+   - { Path: '/etc/cron.hourly', Perm: '700', user: 'root', State: 'directory' }                                   #Control ID 7343
+   - { Path: '/etc/cron.weekly', Perm: '700', user: 'root', State: 'directory' }                                   #Control ID 7345
+   - { Path: '/etc/cron.monthly', Perm: '700', user: 'root', State: 'directory' }                                  #Control ID 7347
+   - { Path: '/etc/shadow', Perm: '000', user: 'root', group: 'root', State: 'file' }                         #Control ID 2188,4990
+   - { Path: '/etc/shadow-', Perm: '000', user: 'root', group: 'root', State: 'file' }                         #Control ID 10692,10693

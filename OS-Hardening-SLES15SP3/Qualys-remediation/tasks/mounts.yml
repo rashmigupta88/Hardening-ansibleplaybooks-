@@ -1,0 +1,31 @@
+---
+- block:
+  -  name: Adding tmpfs in /etc/fstab  #Contol ID 14609
+     blockinfile:
+       path: /etc/fstab
+       block: |
+         tmpfs       /dev/shm      tmpfs   rw,nosuid,noexec,nodev,seclabel    0 0
+       backup: yes
+     notify:
+       - Mounting tmpfs
+
+  -  name: Adding mount options in /tmp  #Control ID 14599,14602,14603
+     mount:
+       path: /tmp
+       src: /dev/vg_root/lv_tmp
+       fstype: ext4
+       opts: defaults,nodev,nosuid,noexec,rw,relatime,data=ordered
+       state: present
+     notify:
+       - Remounting /tmp
+
+  -  name: Adding mount options in /home  #Control ID 7403
+     mount:
+       path: /home
+       src: /dev/vg_root/lv_home
+       fstype: ext4
+       opts: defaults,nodev,data=ordered
+       state: present
+     notify:
+       - Remounting /home
+

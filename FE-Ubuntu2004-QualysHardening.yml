@@ -1,0 +1,531 @@
+---
+
+###########################################################################################################################################################
+#
+# Ansible Playbook for applying Qulays Hardening Parameters on Ubuntu 20.04 ECS created from Flexible Engine OBS Ubuntu 20.04 Image
+#
+###########################################################################################################################################################
+#
+# Author : rashmi Gupta
+#
+# Version : 1.0
+###########################################################################################################################################################
+
+
+- hosts: all
+  remote_user: cloud
+  become: True
+  tasks:
+  - name: Changing value of PASS_MIN_DAYS in login.defs file CID#1072
+    lineinfile:
+      dest: /etc/login.defs
+      regexp: '^PASS_MIN_DAYS\s+'
+      line: 'PASS_MIN_DAYS\t7'
+      backrefs: yes
+      backup: yes
+    ignore_errors: yes
+
+  - name: Changing value of PASS_MAX_DAYS in login.defs file CID#3376
+    lineinfile:
+      dest: /etc/login.defs
+      regexp: '^PASS_MAX_DAYS\s+'
+      line: 'PASS_MAX_DAYS\t90'
+      backrefs: yes
+      backup: yes
+    ignore_errors: yes
+
+  - name: Check if the /etc/at.deny file exists CID#1418
+    stat:
+      path: /etc/at.deny
+    register: stat_result
+
+  - name: Delete the file /etc/at.deny ,if it exists CID#1418
+    file:
+      path: /etc/at.deny
+      state: absent
+    when: stat_result.stat.exists
+    ignore_errors: yes
+
+  - name: Set INACTIVE=30 in /etc/default/useradd file CID#1616
+    lineinfile:
+      dest=/etc/default/useradd
+      regexp='INACTIVE=(.*)'
+      line='INACTIVE=30'
+      backrefs=yes
+      backup=yes
+    ignore_errors: yes
+
+
+  - name: Change file permissions /etc/ssh/sshd_config CID#2158
+    file:
+      path: /etc/ssh/sshd_config
+      mode: '0600'
+
+  - name: Changing value of X11Forwarding in sshd_config file CID#2233
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^X11Forwarding\s+'
+      line: 'X11Forwarding no'
+      backrefs: yes
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding Maxretries in sshd_config file CID#2234
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^MaxAuthTries\s+'
+      line: 'MaxAuthTries 4'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Changind IgnoreRhosts in sshd_config file CID#2236
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^IgnoreRhosts\s+'
+      line: 'IgnoreRhosts yes'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Changing value of PermitRootLogin in sshd_config file CID#2239
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin\s+'
+      line: 'PermitRootLogin no'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Changing value of PermitEmptyPasswords in sshd_config file CID#2240
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^PermitEmptyPasswords\s+'
+      line: 'PermitEmptyPasswords no'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Changing value of HostbasedAuthentication in sshd_config file CID#2278
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^HostbasedAuthentication\s+'
+      line: 'HostbasedAuthentication no'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Changing value of LogLevel in sshd_config file CID#3598
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^LogLevel\s+'
+      line: 'LogLevel INFO'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding AllowTcpForwarding in sshd_config file CID#5216
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^AllowTcpForwarding\s+'
+      line: 'AllowTcpForwarding no'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding Ciphers in sshd_config file CID#5220
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^Ciphers\s+'
+      line: 'Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding ClientAliveCountMax in sshd_config file CID#5221
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^ClientAliveCountMax\s+'
+      line: 'ClientAliveCountMax 3'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding ClientAliveInterval in sshd_config file CID#5222
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^ClientAliveInterval\s+'
+      line: 'ClientAliveInterval 300'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding PermitUserEnvironment in sshd_config file CID#5279
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^PermitUserEnvironment\s+'
+      line: 'PermitUserEnvironment no'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding LoginGraceTime in sshd_config file CID#5281
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^LoginGraceTime\s+'
+      line: 'LoginGraceTime 30'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding MACs in sshd_config file CID#5283
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^MACs\s+'
+      line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding MaxStartups in sshd_config file CID#5284
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^MaxStartups\s+'
+      line: 'MaxStartups 10:30:60'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding MaxSessions in sshd_config file CID#5373
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^MaxSessions\s+'
+      line: 'MaxSessions 4'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Adding KexAlgorithms in sshd_config file CID#14400
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^KexAlgorithms\s+'
+      line: 'KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,ecdh-sha2-nistp521,ecdh-sha2-nistp384,ecdh-sha2-nistp256,diffie-hellman-group-exchange-sha256'
+      backup: yes
+    ignore_errors: yes
+
+  - name: Change directory permissions /etc/cron.d CID#7339
+    file:
+      path: /etc/cron.d/
+      mode: '0700'
+
+  - name: Change directory permissions /etc/cron.daily/ CID#7341
+    file:
+      path: /etc/cron.daily/
+      mode: '0700'
+
+  - name: Change directory permissions /etc/cron.hourly/ CID#7343
+    file:
+      path: /etc/cron.hourly/
+      mode: '0700'
+
+  - name: Change directory permissions /etc/cron.weekly/ CID#7345
+    file:
+      path: /etc/cron.weekly/
+      mode: '0700'
+
+  - name: Change directory permissions /etc/cron.monthly/ CID#7347
+    file:
+      path: /etc/cron.monthly/
+      mode: '0700'
+
+  - name: Updating sysctl.conf with net.ipv4.conf.all.secure_redirects CID#1770 #5957
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.all.secure_redirects'
+      line: 'net.ipv4.conf.all.secure_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.default.secure_redirects CID#1771 #5961
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.default.secure_redirects'
+      line: 'net.ipv4.conf.default.secure_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.icmp_echo_ignore_broadcasts CID#1772
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.icmp_echo_ignore_broadcasts'
+      line: 'net.ipv4.icmp_echo_ignore_broadcasts = 1'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.all.accept_source_route CID#1774
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.all.accept_source_route'
+      line: 'net.ipv4.conf.all.accept_source_route = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.default.rp_filter CID#1776 #5958 #12801
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.default.rp_filter'
+      line: 'net.ipv4.conf.default.rp_filter = 1'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.tcp_syncookies CID#1777
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.tcp_syncookies'
+      line: 'net.ipv4.tcp_syncookies = 1'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.ip_forward CID#1778 #12787
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.ip_forward'
+      line: 'net.ipv4.ip_forward = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.all.send_redirects CID#1779 #5965 #12788
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.all.send_redirects'
+      line: 'net.ipv4.conf.all.send_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.default.send_redirects CID#1780 #5964 #12789
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.default.send_redirects'
+      line: 'net.ipv4.conf.default.send_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.all.log_martians CID#2276 #5966
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.all.log_martians'
+      line: 'net.ipv4.conf.all.log_martians = 1'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.default.accept_source_route CID#2321 #5959
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.default.accept_source_route'
+      line: 'net.ipv4.conf.default.accept_source_route = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.all.accept_redirects CID#5956
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.all.accept_redirects'
+      line: 'net.ipv4.conf.all.accept_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.default.accept_redirects CID#1769 #5960 #12793
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.default.accept_redirects'
+      line: 'net.ipv4.conf.default.accept_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with fs.suid_dumpable CID#7435 #10508
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)fs.suid_dumpable'
+      line: 'fs.suid_dumpable = 0'
+      backup: yes
+
+  - name: Updating apport to retain fs.suid_dumpable after reboot CID#7435 #10508
+    lineinfile:
+      dest: /etc/init.d/apport
+      regexp: '^(\s*)echo 2 > /proc/sys/fs/suid_dumpable'
+      line: '        echo 0 > /proc/sys/fs/suid_dumpable'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.default.log_martians CID#7464 #10487
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.default.log_martians'
+      line: 'net.ipv4.conf.default.log_martians = 1'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv6.conf.all.accept_ra CID#7478
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv6.conf.all.accept_ra'
+      line: 'net.ipv6.conf.all.accept_ra = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv6.conf.default.accept_ra CID#7500
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv6.conf.default.accept_ra'
+      line: 'net.ipv6.conf.default.accept_ra = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv6.conf.all.accept_redirects CID#7505 #10490
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv6.conf.all.accept_redirects'
+      line: 'net.ipv6.conf.all.accept_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv6.conf.default.accept_redirects CID#7506 #10491
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv6.conf.default.accept_redirects'
+      line: 'net.ipv6.conf.default.accept_redirects = 0'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.conf.all.rp_filter CID#1775 #7513 #12800
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.conf.all.rp_filter'
+      line: 'net.ipv4.conf.all.rp_filter = 1'
+      backup: yes
+
+  - name: Updating sysctl.conf with kernel.randomize_va_space CID#10507
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)kernel.randomize_va_space'
+      line: 'kernel.randomize_va_space = 2'
+      backup: yes
+
+  - name: Updating sysctl.conf with net.ipv4.icmp_ignore_bogus_error_responses CID#10158 #12799
+    lineinfile:
+      dest: /etc/sysctl.conf
+      regexp: '^(#*)net.ipv4.icmp_ignore_bogus_error_responses'
+      line: 'net.ipv4.icmp_ignore_bogus_error_responses = 1'
+      backup: yes
+
+  - name: Updating TMOUT in /etc/profile CID#2679
+    lineinfile:
+      dest: /etc/profile
+      regexp: '^(#*)TMOUT'
+      line: 'TMOUT=900'
+      backup: yes
+
+  - name: Updating umask in /etc/bash.bashrc CID#4726
+    lineinfile:
+      dest: /etc/bash.bashrc
+      regexp: '^(#*)umask'
+      line: 'umask 027'
+      backup: yes
+
+  - name: Modify Permission of file /etc/crontab to 600 CID#5154
+    file:
+      path: /etc/crontab
+      mode: 0600
+    ignore_errors: yes
+
+  - name: Remove telnet CID#7948
+    apt:
+      pkg: telnet
+      state: absent
+      purge: yes
+
+  - name: Create /etc/modprobe.d/cis.conf CID#9705
+    file:
+      path: /etc/modprobe.d/cis.conf
+      state: touch
+
+  - name: Updating cramfs in /etc/modprobe.d/cis.conf CID#9705
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install cramfs /bin/true'
+      line: 'install cramfs /bin/true'
+      backup: yes
+
+  - name: Updating vxfs in /etc/modprobe.d/cis.conf CID#9706
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install freevxfs /bin/true'
+      line: 'install freevxfs /bin/true'
+      backup: yes
+
+  - name: Updating jffs2 in /etc/modprobe.d/cis.conf CID#9707
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install jffs2 /bin/true'
+      line: 'install jffs2 /bin/true'
+      backup: yes
+
+  - name: Updating hfs in /etc/modprobe.d/cis.conf CID#9708
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install hfs /bin/true'
+      line: 'install hfs /bin/true'
+      backup: yes
+
+  - name: Updating hfsplus in /etc/modprobe.d/cis.conf CID#9709
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install hfsplus /bin/true'
+      line: 'install hfsplus /bin/true'
+      backup: yes
+
+  - name: Updating udf in /etc/modprobe.d/cis.conf CID#9711
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install udf /bin/true'
+      line: 'install udf /bin/true'
+      backup: yes
+
+  - name: Remove rsync CID#9952
+    apt:
+      pkg: rsync
+      state: absent
+      purge: yes
+
+  - name: Change directory permissions /var/log CID#10673
+    shell:
+      cmd: 'chmod -R 0740 /var/log'
+      warn: False
+
+  - name: Check core file entry exists or not in limits.conf CID#10866
+    shell: cat /etc/security/limits.conf | grep '\*\s\s\s\s\s\s\s\s\s\s\s\s\s\s\s\ssoft\s\s\s\score'
+    register: result
+    ignore_errors: yes
+
+  - name: Update core file entries in /etc/security/limits.conf CID#10866
+    blockinfile:
+      path: /etc/security/limits.conf
+      marker: ""
+      block: |
+        *                soft    core            0
+        *                hard    core            0
+    when: result.rc!=0
+    ignore_errors: yes
+
+  - name: Updating umask in /etc/profile CID#12884
+    lineinfile:
+      dest: /etc/profile
+      regexp: '^(#*)umask'
+      line: 'umask 027'
+      backup: yes
+
+  - name: Updating use_pty in /etc/sudoers CID#17126
+    lineinfile:
+      dest: /etc/sudoers
+      line: 'Defaults use_pty'
+      backup: yes
+
+  - name: Updating ForwardToSyslog in /etc/systemd/journald.conf CID#17131
+    lineinfile:
+      dest: /etc/systemd/journald.conf
+      regexp: '^(#*)ForwardToSyslog'
+      line: 'ForwardToSyslog=yes'
+      backup: yes
+
+  - name: Updating Compress in /etc/systemd/journald.conf CID#17132
+    lineinfile:
+      dest: /etc/systemd/journald.conf
+      regexp: '^(#*)Compress'
+      line: 'Compress=yes'
+      backup: yes
+
+  - name: Updating Storage in /etc/systemd/journald.conf CID#17133
+    lineinfile:
+      dest: /etc/systemd/journald.conf
+      regexp: '^(#*)Storage'
+      line: 'Storage=persistent'
+      backup: yes
+
+  - name: Updating logfile in /etc/sudoers CID 17145
+    lineinfile:
+      dest: /etc/sudoers
+      line: 'Defaults logfile="/var/log/sudo.log"'
+      backup: yes
+
+  - name: Updating usb-storage in /etc/modprobe.d/cis.conf CID#17275
+    lineinfile:
+      dest: /etc/modprobe.d/cis.conf
+      regexp: '^(#*)install usb-storage /bin/true'
+      line: 'install usb-storage /bin/true'
+      backup: yes

@@ -1,0 +1,17 @@
+---
+
+- name: Change file permission /var/log/
+  find:
+    paths: /var/log/
+    file_type: file
+    patterns: "*.log*,*,YaST2/*_log,YaST2/*.*,YaST2/storage-inst/*.*,YaST2/*,btmp,wtmp,lastlog,*" 
+    recurse: yes
+  register: filelist
+
+- name: change permissions
+  file:
+    path: "{{ item.path }}"
+    state: file
+    mode: "0600"
+  with_items: "{{ filelist.files }}"
+

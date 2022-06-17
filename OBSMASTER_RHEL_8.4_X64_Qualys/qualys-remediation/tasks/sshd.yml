@@ -1,0 +1,20 @@
+---
+
+- name: Setting up fixes in /etc/ssh/sshd_config
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '{{item.From}}'
+    insertafter: '{{item.After}}'
+    line: '{{item.To}}'
+    state: present
+    backup: yes
+  with_items:
+   - { From: '^X11Forwarding', To: 'X11Forwarding no', After: '^#X11Forwarding' }                                      #Control ID 2233
+   - { From: '^MaxAuthTries', To: 'MaxAuthTries 4', After: '^#MaxAuthTries' }                                          #Control ID 2234
+   - { From: '^PermitRootLogin', To: 'PermitRootLogin no', After: '^#PermitRootLogin' }                                #Control ID 2239
+   - { From: '^AllowTcpForwarding', To: 'AllowTcpForwarding no', After: '^#AllowTcpForwarding' }                       #Control ID 5216
+   - { From: '^ClientAliveInterval', To: 'ClientAliveInterval 300', After: '^#ClientAliveInterval' }                   #Control ID 5222
+   - { From: '^LoginGraceTime', To: 'LoginGraceTime 60', After: '^#LoginGraceTime' }                                   #Control ID 5281
+   - { From: '^MaxStartups', To: 'MaxStartups 10:30:60', After: '^#MaxStartups' }                                      #Control ID 5284
+   - { From: '^MaxSessions', To: 'MaxSessions 4', After: '^#MaxSessions' }                                             #Control ID 5373
+   - { From: '^Banner', To: 'Banner /etc/issue.net', After: '^Banner' }                                                #Control ID 8122

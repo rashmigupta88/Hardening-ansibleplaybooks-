@@ -1,0 +1,20 @@
+---
+- name: Mounting tmpfs
+  mount:
+    path: /dev/shm
+    src: tmpfs
+    state: mounted
+    opts: rw,nodev,nosuid,noexec,seclabel
+    fstype: tmpfs
+
+- name: Remounting /tmp
+  mount:
+    path: /tmp
+    src: /dev/mapper/rootvg-tmp_lv
+    state: remounted
+
+- name: Remounting /home
+  mount:
+    path: /home
+    src: /dev/mapper/rootvg-home_lv
+    state: remounted

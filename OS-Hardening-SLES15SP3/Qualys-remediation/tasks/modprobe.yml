@@ -1,0 +1,13 @@
+---
+#Control ID 9710
+#Control ID 9711
+#Control ID 10655,10656,18593,18596,18595
+
+- name: Adding Filesystem in modprobe
+  copy:
+     src: /home/rashmi/Project/OS-Hardening-OBSMASTER84/files/modprobe
+     dest: /etc/modprobe.d/cis.conf
+     owner: root
+     group: root
+     mode: '0644'
+
